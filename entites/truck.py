@@ -1,10 +1,6 @@
-from HashTable import *
-
 class Truck:
-  def __init__(self, curr_location, speed, miles, driver, depart_time):
-    self.max_packages = 16
-    self.curr_packages = 0
-    self.package_list = [None] * max_packages
+  def __init__(self, package_list, curr_location, speed, miles, driver, depart_time):
+    self.package_list = package_list
     self.driver = driver
     self.speed = speed
     self.miles = miles
