@@ -28,4 +28,4 @@ class HashTable:
   def print(self):
     for item in self.hash_table:
       if item is not None:
-        print(str(item[1]))
+        print(str(item))
