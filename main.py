@@ -48,16 +48,19 @@ def findDistance(addr1, addr2):
 # Method for finding the shortest edge between the current node and the given nodes
 def findMinDistance(curr_addr, pkg_list):
   curr_addr = findAddress(curr_addr)
-  next_addr = findAddress(package_list.get(pkg_list[0]).address)
-  curr_min = findDistance(curr_addr, next_addr)
+  test_addr = findAddress(package_list.get(pkg_list[0]).address)
+  curr_min = findDistance(curr_addr, test_addr)
+  next_addr = package_list.get(pkg_list[0]).address
+  curr_pkg = pkg_list[0]
 
   for i in range(1, len(pkg_list)-1):
-    next_addr = findAddress(package_list.get(pkg_list[i]).address)
-    dist = findDistance(curr_addr, next_addr)
+    test_addr = findAddress(package_list.get(pkg_list[i]).address)
+    dist = findDistance(curr_addr, test_addr)
     if float(dist) < float(curr_min):
       curr_min = dist
-  
-  return curr_min
+      next_addr = package_list.get(pkg_list[i]).address
+      curr_pkg = i
+  return [next_addr, curr_min, curr_pkg]
 
 # Method for retrieving the index of an address
 def findAddress(address):
@@ -68,7 +71,16 @@ def findAddress(address):
 truck1 = Truck("4001 South 700 East", 15, 0.0, True, datetime.timedelta(hours=8), [1,2,5,7,8,10,11,12,13,15,17,19,21,22,23,24])
 
 def startTruckDelivery(truck):
-  min = findMinDistance(truck.curr_location, truck.truck_package_list)
-  print(min)
+  while len(truck.truck_package_list) > 0:
+    min = findMinDistance(truck.curr_location, truck.truck_package_list)
+    print(min)
+    truck.curr_location = min[0]
+    truck.miles += float(min[1])
+    truck.truck_package_list.pop(min[2])
+    print(truck.curr_location)
+    print(truck.miles)
+    print(truck.truck_package_list)
+    
+ 
 
 startTruckDelivery(truck1)
