@@ -11,3 +11,6 @@ class Package:
     self.delivered = False
     self.departure_time = 0
     self.delivery_time = 0
+
+  def __str__(self):
+    return f'Package ID: {self.package_id}\nAddress: {self.address}, {self.city}, {self.state} {self.zip_code}\nWeight: {self.weight}\nNotes: {self.notes}\nDelivered: {self.delivered}\nDeparture Time: {self.departure_time}\nDelivery Time: {self.delivery_time}'

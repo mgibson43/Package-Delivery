@@ -51,15 +51,20 @@ def findAddress(address):
 def findDistance(addr1, addr2):
   return distances[addr1][addr2]
 
+# Method for finding the shortest edge given a starting node and a list of nodes
 def findMinDistance(curr_addr, pkg_list):
+  
+  # Initialize variables and find first distance
   next_addr = package_list.get(pkg_list[0]).address
   next_miles = findDistance(findAddress(curr_addr), findAddress(next_addr))
   index = 0
 
+  # Iterate through list and update minimum distance
   for i in range(1, len(pkg_list) - 1):
     test_addr = package_list.get(pkg_list[i]).address
     test_miles = findDistance(findAddress(curr_addr), findAddress(test_addr))
 
+    # If min distance is found, update address, miles, and index
     if (float(next_miles) > float(test_miles)):
       next_addr = test_addr
       next_miles = test_miles
@@ -67,20 +72,28 @@ def findMinDistance(curr_addr, pkg_list):
 
   return [next_addr, next_miles, index]  
 
-truck1 = Truck("4001 South 700 East", 15, 0.0, True, datetime.timedelta(hours=8), [33,2,5,7,8,10,11,12,13,15,17,19,21,22,23,24])
+# Create trucks and manually load each
+truck1 = Truck("4001 South 700 East", 15, 0.0, True, datetime.timedelta(hours=8), [1,2,4,5,7,10,11,13,14,15,16,19,20,34,39,40])
+truck2 = Truck("4001 South 700 East", 15, 0.0, False, datetime.timedelta(hours=11), [3,6,8,9,12,18,25,26,36,37,38])
+truck3 = Truck("4001 South 700 East", 15, 0.0, True, datetime.timedelta(hours=10), [17,21,22,23,24,27,28,29,30,31,32,33,35])
 
+# Begins package delivery for given truck
 def startTruckDelivery(truck):
   while len(truck.truck_package_list) > 0:
     
     next = findMinDistance(truck.curr_location, truck.truck_package_list)
     
-    truck.next_addr = next[0]
+    truck.curr_location = next[0]
     truck.miles += float(next[1])
-    truck.truck_package_list.pop(next[2])
-
-    print(truck.next_addr)
-    print(truck.miles)
-    print(truck.truck_package_list)
+    delivered = truck.truck_package_list.pop(next[2])
+    package_list.get(delivered).delivered = True
 
 
 startTruckDelivery(truck1)
+for i in range(1, 40):
+  print(str(package_list.get(i)))
+# startTruckDelivery(truck2)
+# startTruckDelivery(truck3)
+
+# print(truck1.miles + truck2.miles + truck3.miles)
+
