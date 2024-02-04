@@ -73,9 +73,9 @@ def findMinDistance(curr_addr, pkg_list):
   return [next_addr, next_miles, index]  
 
 # Create trucks and manually load each
-truck1 = Truck("4001 South 700 East", 15, 0.0, True, datetime.timedelta(hours=8), [1,2,4,5,7,10,11,13,14,15,16,19,20,34,39,40])
-truck2 = Truck("4001 South 700 East", 15, 0.0, False, datetime.timedelta(hours=11), [3,6,8,9,12,18,25,26,36,37,38])
-truck3 = Truck("4001 South 700 East", 15, 0.0, True, datetime.timedelta(hours=10), [17,21,22,23,24,27,28,29,30,31,32,33,35])
+final_load = [3,6,8,9,12,18,25,26,36,37,38]
+truck1 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=8), [1,2,4,5,7,10,11,13,14,15,16,19,20,34,39,40], 1)
+truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9), [17,21,22,23,24,27,28,29,30,31,32,33,35], 2)
 
 # Begins package delivery for given truck
 def startTruckDelivery(truck):
@@ -86,14 +86,15 @@ def startTruckDelivery(truck):
     truck.curr_location = next[0]
     truck.miles += float(next[1])
     delivered = truck.truck_package_list.pop(next[2])
-    package_list.get(delivered).delivered = True
 
+    package_list.get(delivered).delivered = True
+  
+  if ((int(truck.truck_number) == 2) and len(final_load) != 0):
+    next = findDistance(findAddress(truck.curr_location), 0)
+    truck.miles += float(next)
+    truck.curr_location = "4001 South 700 East"
+    truck.truck_package_list = final_load
+    startTruckDelivery(truck2)
 
 startTruckDelivery(truck1)
-for i in range(1, 40):
-  print(str(package_list.get(i)))
-# startTruckDelivery(truck2)
-# startTruckDelivery(truck3)
-
-# print(truck1.miles + truck2.miles + truck3.miles)
-
+startTruckDelivery(truck2)
