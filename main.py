@@ -12,7 +12,7 @@ from Truck import *
 package_list = HashTable()
 
 # Read in package data from csv
-with open('data\PackageData.csv') as csvpkg:
+with open('data/PackageData.csv') as csvpkg:
   packages = csv.reader(csvpkg, delimiter=',')
 
   # Create package item from read in data
@@ -32,12 +32,12 @@ with open('data\PackageData.csv') as csvpkg:
     package_list.add(package_id, package)
 
 # Read in distance data from csv
-with open('data\AdjacencyMatrix.csv') as csvdst:
+with open('data/AdjacencyMatrix.csv') as csvdst:
   distances = csv.reader(csvdst)
   distances = list(distances)
 
 # Read in address data from csv
-with open('data\Addresses.csv') as csvadd:
+with open('data/Addresses.csv') as csvadd:
   addresses = csv.reader(csvadd)
   addresses = list(addresses)
 
@@ -85,6 +85,7 @@ def startTruckDelivery(truck):
     
     truck.curr_location = next[0]
     truck.miles += float(next[1])
+    truck.time += datetime.timedelta(hours=float(next[1]) / float(truck.speed))
     delivered = truck.truck_package_list.pop(next[2])
 
     package_list.get(delivered).delivered = True
