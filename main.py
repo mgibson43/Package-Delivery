@@ -12,7 +12,7 @@ from Truck import *
 package_list = HashTable()
 
 # Read in package data from csv
-with open('data/PackageData.csv') as csvpkg:
+with open('data\PackageData.csv') as csvpkg:
   packages = csv.reader(csvpkg, delimiter=',')
 
   # Create package item from read in data
@@ -32,12 +32,12 @@ with open('data/PackageData.csv') as csvpkg:
     package_list.add(package_id, package)
 
 # Read in distance data from csv
-with open('data/AdjacencyMatrix.csv') as csvdst:
+with open('data\AdjacencyMatrix.csv') as csvdst:
   distances = csv.reader(csvdst)
   distances = list(distances)
 
 # Read in address data from csv
-with open('data/Addresses.csv') as csvadd:
+with open('data\Addresses.csv') as csvadd:
   addresses = csv.reader(csvadd)
   addresses = list(addresses)
 
@@ -72,6 +72,15 @@ def findMinDistance(curr_addr, pkg_list):
 
   return [next_addr, next_miles, index]  
 
+def statusUpdate(truck, next_addr, miles, index):
+  truck.curr_location = next_addr
+  truck.miles += float(miles)
+  truck.time += datetime.timedelta(hours=float(miles) / float(truck.speed))
+  delivered = truck.truck_package_list.pop(index)
+
+  
+  package_list.get(delivered).status = "Delivered"
+
 # Create trucks and manually load each
 final_load = [3,6,8,9,12,18,25,26,36,37,38]
 truck1 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=8), [1,2,4,5,7,10,11,13,14,15,16,19,20,34,39,40], 1)
@@ -79,16 +88,16 @@ truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9), [17,
 
 # Begins package delivery for given truck
 def startTruckDelivery(truck):
+
+  for i in range(1, 41):
+    package_list.get(i).status = "En route"
+  
   while len(truck.truck_package_list) > 0:
     
     next = findMinDistance(truck.curr_location, truck.truck_package_list)
+    statusUpdate(truck, next[0], next[1], next[2])
     
-    truck.curr_location = next[0]
-    truck.miles += float(next[1])
-    truck.time += datetime.timedelta(hours=float(next[1]) / float(truck.speed))
-    delivered = truck.truck_package_list.pop(next[2])
-
-    package_list.get(delivered).delivered = True
+    
   
   if ((int(truck.truck_number) == 2) and len(final_load) != 0):
     next = findDistance(findAddress(truck.curr_location), 0)
