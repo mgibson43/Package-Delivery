@@ -14,7 +14,7 @@ package_list = HashTable()
 snapshots = list()
 
 # Read in package data from csv
-with open('data\PackageData.csv') as csvpkg:
+with open('data/PackageData.csv') as csvpkg:
   packages = csv.reader(csvpkg, delimiter=',')
 
   # Create package item from read in data
@@ -34,12 +34,12 @@ with open('data\PackageData.csv') as csvpkg:
     package_list.add(package_id, package)
 
 # Read in distance data from csv
-with open('data\AdjacencyMatrix.csv') as csvdst:
+with open('data/AdjacencyMatrix.csv') as csvdst:
   distances = csv.reader(csvdst)
   distances = list(distances)
 
 # Read in address data from csv
-with open('data\Addresses.csv') as csvadd:
+with open('data/Addresses.csv') as csvadd:
   addresses = csv.reader(csvadd)
   addresses = list(addresses)
 
@@ -84,6 +84,13 @@ def deliveryUpdate(truck, next_addr, miles, index):
   package_list.get(pkg).status = "Delivered"
   package_list.get(pkg).delivery_time = truck.time
 
+  # Checks incorrectly labeled package for update
+  if package_list.get(9).address == "410 S State St":
+    return
+  elif truck.time >= datetime.timedelta(hours=10, minutes=20):
+    package_list.get(9).address = "410 S State St"
+    package_list.get(9).zip_code = "84111"
+
 # Updates package status of packages on truck to "En route" when a truck leaves the distribution center
 def enRouteUpdate(truck):
   for pkg in truck.truck_package_list:
@@ -121,3 +128,7 @@ def startTruckDelivery(truck):
 
 startTruckDelivery(truck1)
 startTruckDelivery(truck2)
+
+total_miles = float(truck1.miles) + float(truck2.miles)
+
+print("Total miles: " + str(total_miles))
