@@ -9,8 +9,8 @@ class Package:
     self.weight = weight
     self.notes = notes
     self.status = "At distribution center"
-    self.departure_time = 0
-    self.delivery_time = 0
+    self.departure_time = None
+    self.delivery_time = None
 
   def __str__(self):
     return f'Package ID: {self.package_id}\nAddress: {self.address}, {self.city}, {self.state} {self.zip_code}\nWeight: {self.weight}\nNotes: {self.notes}\nStatus: {self.status}\nDeparture Time: {self.departure_time}\nDelivery Time: {self.delivery_time}'

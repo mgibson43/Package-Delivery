@@ -72,14 +72,21 @@ def findMinDistance(curr_addr, pkg_list):
 
   return [next_addr, next_miles, index]  
 
-def statusUpdate(truck, next_addr, miles, index):
+# Updates the status of the delivered package
+def deliveryUpdate(truck, next_addr, miles, index):
   truck.curr_location = next_addr
   truck.miles += float(miles)
   truck.time += datetime.timedelta(hours=float(miles) / float(truck.speed))
-  delivered = truck.truck_package_list.pop(index)
-
+  pkg = truck.truck_package_list.pop(index)
   
-  package_list.get(delivered).status = "Delivered"
+  package_list.get(pkg).status = "Delivered"
+  package_list.get(pkg).delivery_time = truck.time
+
+# Updates package status of packages on truck to "En route" when a truck leaves the distribution center
+def enRouteUpdate(truck):
+  for pkg in truck.truck_package_list:
+    package_list.get(pkg).status = "En Route"
+    package_list.get(pkg).departure_time = truck.time
 
 # Create trucks and manually load each
 final_load = [3,6,8,9,12,18,25,26,36,37,38]
@@ -88,17 +95,17 @@ truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9), [17,
 
 # Begins package delivery for given truck
 def startTruckDelivery(truck):
-
-  for i in range(1, 41):
-    package_list.get(i).status = "En route"
   
+  # Set packages to "En route"
+  enRouteUpdate(truck)
+
+  # Loop until all packages have been delivered
   while len(truck.truck_package_list) > 0:
     
     next = findMinDistance(truck.curr_location, truck.truck_package_list)
-    statusUpdate(truck, next[0], next[1], next[2])
-    
-    
+    deliveryUpdate(truck, next[0], next[1], next[2])
   
+  # Load final set of packages only if the truck is truck 2
   if ((int(truck.truck_number) == 2) and len(final_load) != 0):
     next = findDistance(findAddress(truck.curr_location), 0)
     truck.miles += float(next)
