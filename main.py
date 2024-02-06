@@ -7,9 +7,11 @@ import datetime
 from HashTable import *
 from Package import *
 from Truck import *
+from Snapshot import *
 
 # Initialize package hash table
 package_list = HashTable()
+snapshots = list()
 
 # Read in package data from csv
 with open('data\PackageData.csv') as csvpkg:
@@ -88,6 +90,9 @@ def enRouteUpdate(truck):
     package_list.get(pkg).status = "En Route"
     package_list.get(pkg).departure_time = truck.time
 
+def takeSnapshot(time, package_list):
+  snapshots.append(Snapshot(time, package_list))
+
 # Create trucks and manually load each
 final_load = [3,6,8,9,12,18,25,26,36,37,38]
 truck1 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=8), [1,2,4,5,7,10,11,13,14,15,16,19,20,34,39,40], 1)
@@ -104,6 +109,7 @@ def startTruckDelivery(truck):
     
     next = findMinDistance(truck.curr_location, truck.truck_package_list)
     deliveryUpdate(truck, next[0], next[1], next[2])
+    takeSnapshot(truck.time, package_list)
   
   # Load final set of packages only if the truck is truck 2
   if ((int(truck.truck_number) == 2) and len(final_load) != 0):
