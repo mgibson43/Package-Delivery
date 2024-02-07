@@ -14,34 +14,37 @@ package_list = HashTable()
 snapshots = list()
 
 # Read in package data from csv
-with open('data/PackageData.csv') as csvpkg:
-  packages = csv.reader(csvpkg, delimiter=',')
+with open('PackageData.csv') as csv_pkg:
+    packages = csv.reader(csv_pkg, delimiter=',')
 
-  # Create package item from read in data
-  for item in packages:
-    package_id = int(item[0])
-    address = item[1]
-    city = item[2]
-    state = item[3]
-    zip_code = item[4]
-    deadline = item[5]
-    weight = item[6]
-    notes = item[7]
+    # Create package item from read in data
+    for item in packages:
+        package_id = int(item[0])
+        address = item[1]
+        city = item[2]
+        state = item[3]
+        zip_code = item[4]
+        deadline = item[5]
+        weight = item[6]
+        notes = item[7]
+        status = "At the hub"
+        departure_time = None
+        delivery_time = None
 
-    package = Package(package_id, address, city, state, zip_code, deadline, weight, notes)
+        package = Package(package_id, address, city, state, zip_code, deadline, weight, notes, status, departure_time, delivery_time)
 
     # Add package to package hash table
     package_list.add(package_id, package)
 
 # Read in distance data from csv
-with open('data/AdjacencyMatrix.csv') as csvdst:
-  distances = csv.reader(csvdst)
-  distances = list(distances)
+with open('AdjacencyMatrix.csv') as csv_dst:
+    distances = csv.reader(csv_dst)
+    distances = list(distances)
 
 # Read in address data from csv
-with open('data/Addresses.csv') as csvadd:
-  addresses = csv.reader(csvadd)
-  addresses = list(addresses)
+with open('Addresses.csv') as csv_add:
+    addresses = csv.reader(csv_add)
+    addresses = list(addresses)
 
 # Method for retrieving the index of an address
 def findAddress(address):
@@ -84,12 +87,14 @@ def deliveryUpdate(truck, next_addr, miles, index):
   package_list.get(pkg).status = "Delivered"
   package_list.get(pkg).delivery_time = truck.time
 
-  # Checks incorrectly labeled package for update
-  if package_list.get(9).address == "410 S State St":
-    return
-  elif truck.time >= datetime.timedelta(hours=10, minutes=20):
-    package_list.get(9).address = "410 S State St"
-    package_list.get(9).zip_code = "84111"
+    # Checks incorrectly labeled package for update
+    if package_list.get(9).address == "410 S State St":
+        return
+    elif truck.time >= datetime.timedelta(hours=10, minutes=20):
+        package_list.get(9).address = "410 S State St"
+        package_list.get(9).zip_code = "84111"
+    
+    takeSnapshot(truck.time, package_list)
 
 # Updates package status of packages on truck to "En route" when a truck leaves the distribution center
 def enRouteUpdate(truck):
@@ -100,6 +105,24 @@ def enRouteUpdate(truck):
 # Record snapshots of the packages at a given time
 def takeSnapshot(time, package_list):
   snapshots.append(Snapshot(time, package_list))
+
+
+def getSnapshot(time):
+    if time > snapshots[len(snapshots) - 1]:
+            return snapshot[len(snapshots) - 1]
+    if time <= snapshots[0].time:
+            snapshot = snapshots[0]
+            
+    for i in range(len(snapshots) - 1):
+        if time == snapshots[i].time:
+            snapshot = snapshots[i]
+            break
+        if time < snapshots[i].time:
+            snapshot = snapshots[i - 1]
+            break
+        
+    return snapshot
+
 
 # Create trucks and manually load each
 final_load = [3,6,8,9,12,18,25,26,36,37,38]
@@ -130,24 +153,15 @@ def startTruckDelivery(truck):
 def userInterface():
   while True:
 
-    print("Enter a time range that you would like to see a snapshot of in HH:MM format.")
-    user_input = input("Lower limit: ")
-    (lh, lm) = user_input.split(":")
-    user_input = input("Upper limit: ")
-    (uh, um) = user_input.split(":")
-    lower_limit = datetime.timedelta(hours=int(lh), minutes=int(lm))
-    upper_limit = datetime.timedelta(hours=int(uh), minutes=int(um))
-    for snapshot in snapshots:
-      if snapshot.time > lower_limit and snapshot.time < upper_limit:
-        print("What package would you like to view the status of?")
-        pkg = input("Enter package number (leave blank for all packages): ")
-        if pkg == '':
-          for i in range (1, 41):
-            print(str(snapshot.pkg_list.get(i)) + "\n")
-        else:
-          print(str(snapshot.pkg_list.get(int(pkg))))
-    break
-  return
+        user_input = input("Enter a time: ")
+        (h, m) = user_input.split(":")
+        time = datetime.timedelta(hours=int(h), minutes=int(m))
+
+        snapshot = getSnapshot(time)
+
+        print(snapshot.time)
+        break
+    return
 
 startTruckDelivery(truck1)
 startTruckDelivery(truck2)
