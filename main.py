@@ -103,8 +103,22 @@ def enRouteUpdate(truck):
 
 
 # Record snapshots of the packages at a given time
-def takeSnapshot(time, package_list):
-    snapshots.append(Snapshot(time, package_list))
+def takeSnapshot(time, pkg_list):
+    snapshots.append(Snapshot(time, pkg_list))
+
+
+def getSnapshot(time):
+    # print(snapshots[0].time)
+    # if time <= snapshots[0].time:
+    #     return snapshots[0].pkg_list
+    #
+    # print(snapshots[len(snapshots) - 1].time)
+    # if time >= snapshots[len(snapshots) - 1].time:
+    #     return snapshots[len(snapshots) - 1].pkg_list
+
+    for i in range(len(snapshots) - 1):
+        if snapshots[i].time > time:
+            return snapshots[i - 1]
 
 
 # Create trucks and manually load each
@@ -118,6 +132,7 @@ truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9),
 # Begins package delivery for given truck
 def startTruckDelivery(truck):
     # Set packages to "En route"
+    takeSnapshot(truck.time, package_list)
     enRouteUpdate(truck)
 
     # Loop until all packages have been delivered
@@ -137,23 +152,13 @@ def startTruckDelivery(truck):
 
 def userInterface():
     while True:
-
-        print("Enter a time range that you would like to see a snapshot of in HH:MM format.")
-        user_input = input("Lower limit: ")
-        (lh, lm) = user_input.split(":")
-        user_input = input("Upper limit: ")
-        (uh, um) = user_input.split(":")
-        lower_limit = datetime.timedelta(hours=int(lh), minutes=int(lm))
-        upper_limit = datetime.timedelta(hours=int(uh), minutes=int(um))
-        for snapshot in snapshots:
-            if lower_limit < snapshot.time < upper_limit:
-                print("What package would you like to view the status of?")
-                pkg = input("Enter package number (leave blank for all packages): ")
-                if pkg == '':
-                    for i in range(1, 41):
-                        print(str(snapshot.pkg_list.get(i)) + "\n")
-                else:
-                    print(str(snapshot.pkg_list.get(int(pkg))))
+        user_input = input(
+            "Enter a time for which you would like to see the status of the package(s) in HH:MM format: ")
+        (h, m) = user_input.split(":")
+        time = datetime.timedelta(hours=int(h), minutes=int(m))
+        snapshot = getSnapshot(time)
+        for snap in snapshots:
+            print(snapshot.pkg_list)
         break
     return
 
