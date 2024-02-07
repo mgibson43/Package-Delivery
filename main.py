@@ -113,17 +113,19 @@ def takeSnapshot(time, package_list):
 
 
 def getSnapshot(time):
-    for i in range(len(snapshots) - 1):
-        if time <= snapshots[0].time:
+    if time > snapshots[len(snapshots) - 1]:
+            return snapshot[len(snapshots) - 1]
+    if time <= snapshots[0].time:
             snapshot = snapshots[0]
-            break
+            
+    for i in range(len(snapshots) - 1):
         if time == snapshots[i].time:
             snapshot = snapshots[i]
             break
         if time < snapshots[i].time:
             snapshot = snapshots[i - 1]
             break
-
+        
     return snapshot
 
 
