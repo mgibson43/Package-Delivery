@@ -11,10 +11,9 @@ from Snapshot import *
 
 # Initialize package hash table
 package_list = HashTable()
-snapshots = list()
 
 # Read in package data from csv
-with open('data/PackageData.csv') as csv_pkg:
+with open('PackageData.csv') as csv_pkg:
     packages = csv.reader(csv_pkg, delimiter=',')
 
     # Create package item from read in data
@@ -34,12 +33,12 @@ with open('data/PackageData.csv') as csv_pkg:
         package_list.add(package_id, package)
 
 # Read in distance data from csv
-with open('data/AdjacencyMatrix.csv') as csv_dst:
+with open('AdjacencyMatrix.csv') as csv_dst:
     distances = csv.reader(csv_dst)
     distances = list(distances)
 
 # Read in address data from csv
-with open('data/Addresses.csv') as csv_add:
+with open('Addresses.csv') as csv_add:
     addresses = csv.reader(csv_add)
     addresses = list(addresses)
 
@@ -102,11 +101,6 @@ def enRouteUpdate(truck):
         package_list.get(pkg).departure_time = truck.time
 
 
-# Record snapshots of the packages at a given time
-def takeSnapshot(time, package_list):
-    snapshots.append(Snapshot(time, package_list))
-
-
 # Create trucks and manually load each
 final_load = [3, 6, 8, 9, 12, 18, 25, 26, 36, 37, 38]
 truck1 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=8),
@@ -124,7 +118,6 @@ def startTruckDelivery(truck):
     while len(truck.truck_package_list) > 0:
         next_addr = findMinDistance(truck.curr_location, truck.truck_package_list)
         deliveryUpdate(truck, next_addr[0], next_addr[1], next_addr[2])
-        takeSnapshot(truck.time, package_list)
 
     # Load final set of packages only if the truck is truck 2
     if (int(truck.truck_number) == 2) and len(final_load) != 0:
@@ -138,22 +131,9 @@ def startTruckDelivery(truck):
 def userInterface():
     while True:
 
-        print("Enter a time range that you would like to see a snapshot of in HH:MM format.")
-        user_input = input("Lower limit: ")
-        (lh, lm) = user_input.split(":")
-        user_input = input("Upper limit: ")
-        (uh, um) = user_input.split(":")
-        lower_limit = datetime.timedelta(hours=int(lh), minutes=int(lm))
-        upper_limit = datetime.timedelta(hours=int(uh), minutes=int(um))
-        for snapshot in snapshots:
-            if lower_limit < snapshot.time < upper_limit:
-                print("What package would you like to view the status of?")
-                pkg = input("Enter package number (leave blank for all packages): ")
-                if pkg == '':
-                    for i in range(1, 41):
-                        print(str(snapshot.pkg_list.get(i)) + "\n")
-                else:
-                    print(str(snapshot.pkg_list.get(int(pkg))))
+        user_input = input("Enter a time for which you would like to see the status of the package(s) in HH:MM format: ")
+        (h, m) = user_input.split(":")
+        
         break
     return
 
