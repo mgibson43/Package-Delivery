@@ -97,6 +97,7 @@ def enRouteUpdate(truck):
     package_list.get(pkg).status = "En Route"
     package_list.get(pkg).departure_time = truck.time
 
+# Record snapshots of the packages at a given time
 def takeSnapshot(time, package_list):
   snapshots.append(Snapshot(time, package_list))
 
@@ -126,9 +127,33 @@ def startTruckDelivery(truck):
     truck.truck_package_list = final_load
     startTruckDelivery(truck2)
 
+def userInterface():
+  while True:
+
+    print("Enter a time range that you would like to see a snapshot of in HH:MM format.")
+    user_input = input("Lower limit: ")
+    (lh, lm) = user_input.split(":")
+    user_input = input("Upper limit: ")
+    (uh, um) = user_input.split(":")
+    lower_limit = datetime.timedelta(hours=int(lh), minutes=int(lm))
+    upper_limit = datetime.timedelta(hours=int(uh), minutes=int(um))
+    for snapshot in snapshots:
+      if snapshot.time > lower_limit and snapshot.time < upper_limit:
+        print("What package would you like to view the status of?")
+        pkg = input("Enter package number (leave blank for all packages): ")
+        if pkg == '':
+          for i in range (1, 41):
+            print(str(snapshot.pkg_list.get(i)) + "\n")
+        else:
+          print(str(snapshot.pkg_list.get(int(pkg))))
+    break
+  return
+
 startTruckDelivery(truck1)
 startTruckDelivery(truck2)
 
 total_miles = float(truck1.miles) + float(truck2.miles)
 
 print("Total miles: " + str(total_miles))
+
+userInterface()
