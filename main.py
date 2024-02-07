@@ -83,7 +83,6 @@ def deliveryUpdate(truck, next_addr, miles, index):
     truck.time += datetime.timedelta(hours=float(miles) / float(truck.speed))
     pkg = truck.truck_package_list.pop(index)
 
-    package_list.get(pkg).status = "Delivered"
     package_list.get(pkg).delivery_time = truck.time
 
     # Checks incorrectly labeled package for update
@@ -97,7 +96,6 @@ def deliveryUpdate(truck, next_addr, miles, index):
 # Updates package status of packages on truck to "En route" when a truck leaves the distribution center
 def enRouteUpdate(truck):
     for pkg in truck.truck_package_list:
-        package_list.get(pkg).status = "En Route"
         package_list.get(pkg).departure_time = truck.time
 
 
@@ -128,12 +126,32 @@ def startTruckDelivery(truck):
         startTruckDelivery(truck2)
 
 
+def getStatusAll(time):
+    status = list()
+    for i in range(1, 41):
+        pkg = package_list.get(i)
+        if time >= pkg.delivery_time:
+            status.append([pkg, "Delivered"])
+        elif time < pkg.delivery_time >= pkg.departure_time:
+            status.append([pkg, "En route"])
+        elif time > pkg.departure_time:
+            status.append([pkg, "At the hub"])
+    return status
+
 def userInterface():
     while True:
 
         user_input = input("Enter a time for which you would like to see the status of the package(s) in HH:MM format: ")
         (h, m) = user_input.split(":")
-        
+        time = datetime.timedelta(hours=int(h), minutes=int(m))
+
+        pkg = input("Enter a package you would like the status of or leave blank to see the status of all packages: ")
+
+        status = getStatusAll(time)
+
+        for pkg in status:
+            print(pkg)
+
         break
     return
 

@@ -8,7 +8,6 @@ class Package:
     self.deadline = deadline
     self.weight = weight
     self.notes = notes
-    self.status = "At distribution center"
     self.departure_time = None
     self.delivery_time = None
 
