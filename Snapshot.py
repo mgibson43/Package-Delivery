@@ -1,5 +1,5 @@
-import HashTable
-import Package
+from HashTable import *
+from Package import *
 
 class Snapshot:
   def __init__(self, time, pkg_list):
