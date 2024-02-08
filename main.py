@@ -128,11 +128,11 @@ def getSnapshot(time):
 
 
 # Create trucks and manually load each
-final_load = [3, 6, 8, 9, 12, 18, 25, 26, 36, 37, 38]
+final_load = [3, 6, 8, 9, 12, 18, 25, 26, 36, 38]
 truck1 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=8),
                [1, 2, 4, 5, 7, 10, 11, 13, 14, 15, 16, 19, 20, 34, 39, 40], 1)
 truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9),
-               [17, 21, 22, 23, 24, 27, 28, 29, 30, 31, 32, 33, 35], 2)
+               [17, 21, 22, 23, 24, 27, 28, 29, 30, 31, 32, 33, 35, 37], 2)
 
 
 # Begins package delivery for given truck
@@ -147,19 +147,20 @@ def startTruckDelivery(truck):
         takeSnapshot(truck.time, package_list)
 
         # Load final set of packages only if the truck is truck 2
-        if (int(truck.truck_number) == 2) and len(final_load) != 0:
-            hub = findDistance(findAddress(truck.curr_location), 0)
-            truck.miles += float(hub)
-            truck.time += datetime.timedelta(hours=float(hub) / float(truck.speed))
-            truck.curr_location = "4001 South 700 East"
+    if (int(truck.truck_number) == 2) and len(final_load) != 0:
+        hub = findDistance(findAddress(truck.curr_location), 0)
+        truck.miles += float(hub)
+        truck.time += datetime.timedelta(hours=float(hub) / float(truck.speed))
+        truck.curr_location = "4001 South 700 East"
 
-            # Checks time to update incorrect package
-            if truck.time < datetime.timedelta(hours=10, minutes=20):
-                truck.time = datetime.timedelta(hours=10, minutes=20)
-                changePackageAddress(9, "410 S State St", "84111")
-            truck.truck_package_list = final_load
+        # Checks time to update incorrect package
+        if truck.time < datetime.timedelta(hours=10, minutes=20):
+            truck.time = datetime.timedelta(hours=10, minutes=20)
+            changePackageAddress(9, "410 S State St", "84111")
 
-            startTruckDelivery(truck2)
+        truck.truck_package_list = final_load
+
+        startTruckDelivery(truck2)
 
 
 # Changes the address and zip_code of a given package
