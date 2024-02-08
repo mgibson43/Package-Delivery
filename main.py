@@ -144,7 +144,7 @@ def startTruckDelivery(truck):
     while len(truck.truck_package_list) > 0:
         next_addr = findMinDistance(truck.curr_location, truck.truck_package_list)
         deliveryUpdate(truck, next_addr[0], next_addr[1], next_addr[2])
-        takeSnapshot(truck.time, package_list)S
+        takeSnapshot(truck.time, package_list)
 
         # Load final set of packages only if the truck is truck 2
         if (int(truck.truck_number) == 2) and len(final_load) != 0:
