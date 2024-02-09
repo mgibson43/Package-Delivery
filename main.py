@@ -109,7 +109,7 @@ def enRouteUpdate(truck):
 def takeSnapshot(time, package_list):
     snapshots.append(Snapshot(time, package_list))
 
-
+# Return closest snapshot to given time
 def getSnapshot(time):
     if time > snapshots[len(snapshots) - 1].time:
         return snapshots[len(snapshots) - 1].package_list
@@ -128,11 +128,11 @@ def getSnapshot(time):
 
 
 # Create trucks and manually load each
-final_load = [3, 6, 8, 9, 12, 18, 25, 26, 36, 38]
+final_load = [2, 3, 4, 5, 9, 18, 26, 28, 32, 35, 36, 38]
 truck1 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=8),
-               [1, 2, 4, 5, 7, 10, 11, 13, 14, 15, 16, 19, 20, 34, 39, 40], 1)
-truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9),
-               [17, 21, 22, 23, 24, 27, 28, 29, 30, 31, 32, 33, 35, 37], 2)
+               [1, 13, 14, 15, 16, 19, 20, 27, 29, 30, 31, 34, 37, 40], 1)
+truck2 = Truck("4001 South 700 East", 18, 0.0, datetime.timedelta(hours=9, minutes=5),
+               [6, 7, 8, 10, 11, 12, 17, 21, 22, 23, 24, 25, 33, 39], 2)
 
 
 # Begins package delivery for given truck
@@ -146,7 +146,7 @@ def startTruckDelivery(truck):
         deliveryUpdate(truck, next_addr[0], next_addr[1], next_addr[2])
         takeSnapshot(truck.time, package_list)
 
-        # Load final set of packages only if the truck is truck 2
+    # Load final set of packages only if the truck is truck 2
     if (int(truck.truck_number) == 2) and len(final_load) != 0:
         hub = findDistance(findAddress(truck.curr_location), 0)
         truck.miles += float(hub)
