@@ -15,3 +15,6 @@ class Package:
 
     def __str__(self):
         return f'Package ID: {self.package_id}\nAddress: {self.address}\nCity: {self.city}\nState: {self.state}\nZip Code: {self.zip_code}\nDeadline: {self.deadline}\nWeight: {self.weight}\nStatus: {self.status}\nDeparture Time: {self.departure_time}\nDelivery Time: {self.delivery_time}'
+
+    def getStatus(self):
+        return f'Package ID: {self.package_id}, Address: {self.address}, Deadline: {self.deadline}, Delivery Time: {self.delivery_time}, Status: {self.status}'

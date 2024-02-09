@@ -109,6 +109,7 @@ def enRouteUpdate(truck):
 def takeSnapshot(time, package_list):
     snapshots.append(Snapshot(time, package_list))
 
+
 # Return closest snapshot to given time
 def getSnapshot(time):
     if time > snapshots[len(snapshots) - 1].time:
@@ -195,8 +196,7 @@ def userInterface():
 
         if pkg == '':
             for i in range(1, 41):
-                print(str(snapshot.get(i)))
-                print("-" * 50)
+                print((snapshot.get(i)).getStatus())
         else:
             print(str(snapshot.get(int(pkg))))
             print("-" * 50)
