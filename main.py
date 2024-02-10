@@ -1,5 +1,6 @@
-# C950 - NHP3
+# C950 - NHP3 Task 2
 # Student ID - 010776164
+# 2/10/2024
 # Matthew Gibson
 
 import csv
@@ -115,7 +116,7 @@ def getSnapshot(time):
     if time > snapshots[len(snapshots) - 1].time:
         return snapshots[len(snapshots) - 1].package_list
     if time <= snapshots[0].time:
-        return snapshots[0].pkg_list.package_list
+        return snapshots[0].package_list
 
     for i in range(len(snapshots) - 1):
         if time == snapshots[i].time:
